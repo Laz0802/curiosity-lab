@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Mastery Dashboard — The Curiosity Lab</title>
+<style>
+  :root{
+    --teal-900:#0b3d3e;
+    --teal-700:#0f5c5e;
+    --teal-500:#17878a;
+    --teal-300:#5fb8ba;
+    --amber-400:#f0a83c;
+    --amber-500:#e0902a;
+    --paper:#faf7f0;
+    --ink:#1e2b2b;
+    --card:#ffffff;
+    --shadow: 0 6px 18px rgba(11,61,62,0.12);
+    --red:#d64545;
+    --yellow:#e0b23c;
+    --green:#3f9142;
+    --blue:#2f6fb0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Segoe UI', Helvetica, Arial, sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.5;
+  }
+  header{
+    background:var(--teal-900); color:white; padding:1rem 1.25rem;
+    display:flex; align-items:center; justify-content:space-between;
+    box-shadow:var(--shadow);
+  }
+  .brand{display:flex; align-items:center; gap:0.6rem; font-weight:700; font-size:1.15rem;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--amber-400),var(--teal-300));
+    display:flex;align-items:center;justify-content:center;font-size:1.05rem;
+  }
+  #logoutBtn{
+    background:rgba(255,255,255,0.12); color:white; border:1px solid rgba(255,255,255,0.3);
+    padding:0.4rem 0.9rem; border-radius:7px; cursor:pointer; font-size:0.85rem; display:none;
+  }
+
+  main{max-width:800px; margin:0 auto; padding:2rem 1.25rem 4rem;}
+
+  /* CODE ENTRY */
+  .login-card{
+    background:var(--card); border-radius:16px; box-shadow:var(--shadow);
+    padding:2.5rem 2rem; text-align:center; max-width:420px; margin:3rem auto 0;
+  }
+  .login-card h1{color:var(--teal-900); font-size:1.4rem; margin-top:0;}
+  .login-card p{color:#4b5f5f; font-size:0.95rem;}
+  #codeInput{
+    width:100%; padding:0.85rem 1rem; font-size:1.1rem; text-align:center;
+    border:2px solid var(--teal-300); border-radius:8px; margin:1.2rem 0; letter-spacing:1px;
+  }
+  #submitCode{
+    width:100%; background:var(--amber-400); color:var(--teal-900); font-weight:700;
+    border:none; padding:0.85rem; border-radius:8px; font-size:1rem; cursor:pointer;
+  }
+  #submitCode:hover{background:var(--amber-500);}
+  .error-msg{color:var(--red); font-size:0.9rem; margin-top:0.8rem; display:none;}
+  .privacy-note{font-size:0.78rem; color:#7a8a8a; margin-top:1.5rem;}
+
+  /* LOADING */
+  #loadingState{text-align:center; padding:4rem 1rem; color:var(--teal-700); display:none;}
+
+  /* DASHBOARD */
+  #dashboard{display:none;}
+  .welcome{text-align:center; margin-bottom:1.8rem;}
+  .welcome h2{color:var(--teal-900); margin-bottom:0.2rem;}
+  .welcome span{color:#6b7a7a; font-size:0.9rem;}
+
+  .subject-tabs{display:flex; gap:0.6rem; justify-content:center; margin-bottom:1.8rem;}
+  .subject-tab{
+    padding:0.55rem 1.4rem; border-radius:999px; border:2px solid var(--teal-500);
+    background:white; color:var(--teal-700); font-weight:700; cursor:pointer; font-size:0.95rem;
+  }
+  .subject-tab.active{background:var(--teal-500); color:white;}
+
+  .stat-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1.8rem;}
+  .stat-card{background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:1.3rem; text-align:center;}
+  .stat-card .label{font-size:0.8rem; color:#6b7a7a; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;}
+  .stat-card .value{font-size:2rem; font-weight:800; color:var(--teal-900); margin:0.2rem 0;}
+  .stat-card .value.band-red{color:var(--red);}
+  .stat-card .value.band-yellow{color:var(--yellow);}
+  .stat-card .value.band-green{color:var(--green);}
+  .stat-card .value.band-blue{color:var(--blue);}
+
+  .goal-bar-wrap{background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:1.4rem 1.5rem; margin-bottom:1.8rem;}
+  .goal-bar-wrap h3{margin:0 0 0.9rem; color:var(--teal-900); font-size:1rem;}
+  .bar-track{position:relative; height:22px; background:#eee3cf; border-radius:999px; overflow:visible; margin-bottom:0.6rem;}
+  .bar-fill{position:absolute; top:0; left:0; height:100%; border-radius:999px; transition:width 0.4s ease;}
+  .goal-marker{position:absolute; top:-6px; bottom:-6px; width:2px; background:#333;}
+  .goal-marker span{
+    position:absolute; top:-1.4rem; left:50%; transform:translateX(-50%);
+    font-size:0.7rem; white-space:nowrap; color:#4b5f5f; font-weight:700;
+  }
+  .legend{display:flex; gap:1rem; flex-wrap:wrap; font-size:0.78rem; color:#4b5f5f; margin-top:1.4rem;}
+  .legend span{display:flex; align-items:center; gap:0.35rem;}
+  .dot{width:10px; height:10px; border-radius:50%; display:inline-block;}
+
+  .compare-row{display:flex; justify-content:space-between; font-size:0.85rem; color:#4b5f5f; margin-top:0.4rem;}
+
+  .module-group{margin-bottom:1.6rem;}
+  .module-group h3{color:var(--teal-700); font-size:0.95rem; margin-bottom:0.6rem; text-transform:uppercase; letter-spacing:0.5px;}
+  .concept-card{
+    background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:1rem 1.3rem;
+    margin-bottom:0.7rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;
+  }
+  .concept-card .name{font-weight:600; color:var(--teal-900); font-size:0.92rem; flex:1; min-width:180px;}
+  .score-pill{
+    padding:0.3rem 0.8rem; border-radius:999px; font-weight:700; font-size:0.85rem; color:white; min-width:60px; text-align:center;
+  }
+  .score-pill.band-red{background:var(--red);}
+  .score-pill.band-yellow{background:var(--yellow); color:#4a3b00;}
+  .score-pill.band-green{background:var(--green);}
+  .score-pill.band-blue{background:var(--blue);}
+  .score-pill.band-none{background:#ccc; color:#555;}
+  .concept-meta{font-size:0.78rem; color:#7a8a8a; text-align:right;}
+
+  footer{text-align:center; padding:2rem 1rem; color:#7a8a8a; font-size:0.8rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="brand-mark">🔬</span> My Mastery Dashboard</div>
+  <button id="logoutBtn">Switch Scholar</button>
+</header>
+
+<main>
+
+  <div class="login-card" id="loginCard">
+    <h1>Enter Your Code</h1>
+    <p>Your teacher gave you a private code. Type it below to see your own progress.</p>
+    <input type="text" id="codeInput" placeholder="e.g. CL-1001" autocomplete="off">
+    <button id="submitCode">View My Progress</button>
+    <div class="error-msg" id="errorMsg"></div>
+    <p class="privacy-note">Only you can see your own scores here. No one else's individual data is ever shown.</p>
+  </div>
+
+  <div id="loadingState">Loading your progress...</div>
+
+  <div id="dashboard">
+    <div class="welcome">
+      <h2 id="welcomeName">Welcome back!</h2>
+      <span id="welcomeGrade"></span>
+    </div>
+
+    <div class="subject-tabs" id="subjectTabs"></div>
+
+    <div id="subjectContent"></div>
+  </div>
+
+</main>
+
+<footer>The Curiosity Lab &mdash; Scholar Mastery Dashboard</footer>
+
+<script>
+  // ---- CONFIG: paste your deployed Apps Script Web App URL below ----
+  var CONFIG = {
+    SCRIPT_URL: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
+  };
+  // ---------------------------------------------------------------
+
+  var state = { data: null, activeSubject: null };
+
+  var loginCard = document.getElementById('loginCard');
+  var loadingState = document.getElementById('loadingState');
+  var dashboard = document.getElementById('dashboard');
+  var errorMsg = document.getElementById('errorMsg');
+  var logoutBtn = document.getElementById('logoutBtn');
+
+  document.getElementById('submitCode').addEventListener('click', submitCode);
+  document.getElementById('codeInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') submitCode();
+  });
+  logoutBtn.addEventListener('click', function(){
+    state.data = null;
+    dashboard.style.display = 'none';
+    logoutBtn.style.display = 'none';
+    loginCard.style.display = 'block';
+    document.getElementById('codeInput').value = '';
+  });
+
+  function submitCode() {
+    var code = document.getElementById('codeInput').value.trim();
+    errorMsg.style.display = 'none';
+    if (!code) return;
+
+    if (CONFIG.SCRIPT_URL.indexOf('PASTE_YOUR') !== -1) {
+      showError('This dashboard is not connected yet. Ask your teacher to finish setup (see SETUP_GUIDE.md).');
+      return;
+    }
+
+    loginCard.style.display = 'none';
+    loadingState.style.display = 'block';
+
+    fetch(CONFIG.SCRIPT_URL + '?code=' + encodeURIComponent(code))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        loadingState.style.display = 'none';
+        if (data.error) {
+          loginCard.style.display = 'block';
+          showError(data.error);
+          return;
+        }
+        state.data = data;
+        renderDashboard(data);
+      })
+      .catch(function(err){
+        loadingState.style.display = 'none';
+        loginCard.style.display = 'block';
+        showError('Could not reach the dashboard. Please try again in a moment.');
+      });
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+
+  function pct(v) {
+    if (typeof v !== 'number') return '—';
+    return Math.round(v * 100) + '%';
+  }
+
+  function bandFor(score, baseline, ambitious) {
+    if (typeof score !== 'number') return 'none';
+    if (score >= ambitious) return 'blue';
+    if (score >= baseline) return 'green';
+    if (score >= baseline - 0.10) return 'yellow';
+    return 'red';
+  }
+
+  function renderDashboard(data) {
+    document.getElementById('welcomeName').textContent = 'Welcome back, ' + data.studentName + '!';
+    document.getElementById('welcomeGrade').textContent = data.grade + ' Grade Scholar';
+
+    var subjects = Object.keys(data.subjects || {});
+    if (!subjects.length) {
+      document.getElementById('subjectContent').innerHTML = '<p style="text-align:center;color:#6b7a7a;">No mastery data found yet for your classes.</p>';
+      dashboard.style.display = 'block';
+      logoutBtn.style.display = 'inline-block';
+      return;
+    }
+
+    state.activeSubject = subjects[0];
+
+    var tabsEl = document.getElementById('subjectTabs');
+    tabsEl.innerHTML = '';
+    subjects.forEach(function(subj){
+      var btn = document.createElement('button');
+      btn.className = 'subject-tab' + (subj === state.activeSubject ? ' active' : '');
+      btn.textContent = subj;
+      btn.addEventListener('click', function(){
+        state.activeSubject = subj;
+        document.querySelectorAll('.subject-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        renderSubject(data.subjects[subj]);
+      });
+      tabsEl.appendChild(btn);
+    });
+
+    renderSubject(data.subjects[state.activeSubject]);
+    dashboard.style.display = 'block';
+    logoutBtn.style.display = 'inline-block';
+  }
+
+  function renderSubject(subj) {
+    var baseline = subj.baselineGoal, ambitious = subj.ambitiousGoal;
+    var overallBand = bandFor(subj.overallMastery, baseline, ambitious);
+
+    var html = '';
+
+    html += '<div class="stat-row">';
+    html += '<div class="stat-card"><div class="label">Overall Mastery</div><div class="value band-' + overallBand + '">' + pct(subj.overallMastery) + '</div></div>';
+    html += '<div class="stat-card"><div class="label">Tested Mastery</div><div class="value">' + pct(subj.testedMastery) + '</div></div>';
+    html += '<div class="stat-card"><div class="label">Your Class Average</div><div class="value" style="color:var(--teal-700);">' + pct(subj.classAverageOverall) + '</div></div>';
+    html += '</div>';
+
+    var pos = Math.min(100, Math.max(0, (subj.overallMastery || 0) * 100));
+    var basePos = baseline * 100, ambPos = ambitious * 100;
+    var fillColor = { red: 'var(--red)', yellow: 'var(--yellow)', green: 'var(--green)', blue: 'var(--blue)', none: '#ccc' }[overallBand];
+
+    html += '<div class="goal-bar-wrap">';
+    html += '<h3>Your Progress Toward This Unit\'s Goals</h3>';
+    html += '<div class="bar-track">';
+    html += '<div class="bar-fill" style="width:' + pos + '%; background:' + fillColor + ';"></div>';
+    html += '<div class="goal-marker" style="left:' + basePos + '%;"><span>Baseline ' + pct(baseline) + '</span></div>';
+    html += '<div class="goal-marker" style="left:' + ambPos + '%;"><span style="top:1.4rem;">Ambitious ' + pct(ambitious) + '</span></div>';
+    html += '</div>';
+    html += '<div class="compare-row"><span>You: ' + pct(subj.overallMastery) + '</span><span>Class average: ' + pct(subj.classAverageOverall) + '</span><span>Grade average: ' + pct(subj.gradeAverageOverall) + '</span></div>';
+    html += '<div class="legend">';
+    html += '<span><span class="dot" style="background:var(--red);"></span>10%+ below baseline</span>';
+    html += '<span><span class="dot" style="background:var(--yellow);"></span>Within 10% of baseline</span>';
+    html += '<span><span class="dot" style="background:var(--green);"></span>Meeting baseline</span>';
+    html += '<span><span class="dot" style="background:var(--blue);"></span>Meeting ambitious goal</span>';
+    html += '</div>';
+    html += '</div>';
+
+    var groups = {};
+    (subj.concepts || []).forEach(function(c){
+      var key = c.unit || 'Other';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(c);
+    });
+
+    Object.keys(groups).forEach(function(unitKey){
+      html += '<div class="module-group"><h3>' + unitKey + '</h3>';
+      groups[unitKey].forEach(function(c){
+        var band = c.score !== null ? bandFor(c.score, baseline, ambitious) : 'none';
+        var scoreLabel = c.score !== null ? pct(c.score) : (c.status || 'Not yet assessed');
+        html += '<div class="concept-card">';
+        html += '<div class="name">' + c.label + '</div>';
+        html += '<div class="score-pill band-' + band + '">' + scoreLabel + '</div>';
+        html += '<div class="concept-meta">Class avg: ' + pct(c.classAverage) + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+
+    document.getElementById('subjectContent').innerHTML = html;
+  }
+</script>'https://script.google.com/macros/s/AKfycbzOTPHB8C3JP_c3GSK6qdJhfT9a7v_HT0Z5YLnMFlhp0u0x9XdIi7emCaBPmPZdl-sXnA/exec'
+
+</body>
+</html>
