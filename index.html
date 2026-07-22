@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Curiosity Lab — Science Scholars</title>
+<style>
+  :root{
+    --teal-900:#0b3d3e;
+    --teal-700:#0f5c5e;
+    --teal-500:#17878a;
+    --teal-300:#5fb8ba;
+    --amber-400:#f0a83c;
+    --amber-500:#e0902a;
+    --paper:#faf7f0;
+    --ink:#1e2b2b;
+    --card:#ffffff;
+    --shadow: 0 6px 18px rgba(11,61,62,0.12);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Helvetica, Arial, sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  a{color:inherit;}
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--teal-900);
+    color:white;
+    box-shadow:var(--shadow);
+  }
+  .nav-wrap{
+    max-width:1100px; margin:0 auto; padding:0.9rem 1.25rem;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{display:flex; align-items:center; gap:0.6rem; font-weight:700; font-size:1.25rem;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:10px;
+    background:linear-gradient(135deg,var(--amber-400),var(--teal-300));
+    display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  }
+  nav ul{list-style:none; display:flex; gap:1.6rem; margin:0; padding:0;}
+  nav a{text-decoration:none; color:#e9f4f4; font-weight:600; font-size:0.95rem; opacity:0.9;}
+  nav a:hover{opacity:1; color:var(--amber-400);}
+  #nav-toggle{display:none;}
+  .burger{display:none; cursor:pointer; font-size:1.6rem; background:none; border:none; color:white;}
+
+  @media (max-width:760px){
+    nav ul{
+      position:absolute; top:64px; left:0; right:0;
+      background:var(--teal-900); flex-direction:column; gap:0;
+      padding:0.5rem 0; display:none;
+    }
+    nav ul.open{display:flex;}
+    nav li{padding:0.8rem 1.5rem; border-top:1px solid rgba(255,255,255,0.08);}
+    .burger{display:block;}
+  }
+
+  /* HERO */
+  .hero{
+    background:
+      radial-gradient(circle at 15% 25%, rgba(240,168,60,0.25), transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(95,184,186,0.35), transparent 50%),
+      linear-gradient(135deg, var(--teal-900), var(--teal-700));
+    color:white;
+    padding:4.5rem 1.25rem 5rem;
+    text-align:center;
+  }
+  .hero h1{
+    font-size:clamp(2rem, 5vw, 3.2rem);
+    margin:0 0 0.6rem;
+    letter-spacing:0.5px;
+  }
+  .hero p{
+    max-width:620px; margin:0 auto 1.8rem;
+    font-size:1.15rem; color:#e2f2f2;
+  }
+  .hero-badges{
+    display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.8rem;
+  }
+  .badge{
+    background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25);
+    padding:0.4rem 0.9rem; border-radius:999px; font-size:0.85rem; font-weight:600;
+  }
+  .cta{
+    display:inline-block; background:var(--amber-400); color:var(--teal-900);
+    font-weight:700; padding:0.85rem 1.8rem; border-radius:8px; text-decoration:none;
+    box-shadow:0 8px 20px rgba(240,168,60,0.35);
+  }
+  .cta:hover{background:var(--amber-500);}
+
+  section{max-width:1100px; margin:0 auto; padding:4rem 1.25rem;}
+  h2.section-title{
+    text-align:center; font-size:1.9rem; color:var(--teal-900); margin-bottom:0.4rem;
+  }
+  p.section-sub{
+    text-align:center; color:#4b5f5f; max-width:600px; margin:0 auto 2.5rem;
+  }
+
+  /* I CAN of the week */
+  .callout{
+    background:var(--card); border-left:6px solid var(--amber-400);
+    border-radius:10px; box-shadow:var(--shadow);
+    padding:1.5rem 1.75rem; max-width:800px; margin:0 auto 3rem;
+  }
+  .callout .tag{
+    text-transform:uppercase; font-size:0.75rem; letter-spacing:1px;
+    color:var(--amber-500); font-weight:700;
+  }
+  .callout p{margin:0.4rem 0 0; font-size:1.15rem; color:var(--teal-900); font-weight:600;}
+
+  /* UNIT CARDS */
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+    gap:1.4rem;
+  }
+  .card{
+    background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+    padding:1.6rem; text-align:left; border-top:5px solid var(--teal-500);
+    transition:transform 0.15s ease;
+  }
+  .card:hover{transform:translateY(-4px);}
+  .card .emoji{font-size:1.8rem; margin-bottom:0.6rem; display:block;}
+  .card h3{margin:0 0 0.4rem; color:var(--teal-900); font-size:1.15rem;}
+  .card p{margin:0 0 0.8rem; font-size:0.92rem; color:#4b5f5f;}
+  .card .grade-tag{
+    display:inline-block; font-size:0.75rem; font-weight:700; color:white;
+    background:var(--teal-500); padding:0.2rem 0.6rem; border-radius:6px;
+  }
+
+  /* VOCAB */
+  .vocab-search{
+    display:block; margin:0 auto 2rem; max-width:400px; width:100%;
+    padding:0.75rem 1rem; border:2px solid var(--teal-300); border-radius:8px;
+    font-size:1rem;
+  }
+  .vocab-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr));
+    gap:1rem;
+  }
+  .vocab-card{
+    background:var(--card); border-radius:10px; padding:1rem 1.2rem;
+    box-shadow:var(--shadow);
+  }
+  .vocab-card strong{color:var(--teal-700); display:block; margin-bottom:0.25rem;}
+  .vocab-card span{font-size:0.9rem; color:#4b5f5f;}
+  .vocab-card.hidden{display:none;}
+
+  /* NOTEBOOK RESOURCES */
+  .resource-list{list-style:none; padding:0; margin:0; display:grid; gap:0.9rem;}
+  .resource-list li{
+    background:var(--card); border-radius:10px; box-shadow:var(--shadow);
+    padding:1rem 1.3rem; display:flex; align-items:center; gap:0.9rem;
+  }
+  .resource-list .icon{
+    width:36px;height:36px;border-radius:8px;background:var(--teal-300);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;
+  }
+  .resource-list a{font-weight:700; color:var(--teal-700); text-decoration:none;}
+  .resource-list small{display:block; color:#6b7a7a; font-weight:400;}
+
+  /* GALLERY */
+  .gallery{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:1.2rem;
+  }
+  .gallery figure{
+    margin:0; background:var(--card); border-radius:12px; overflow:hidden; box-shadow:var(--shadow);
+  }
+  .gallery .thumb{
+    height:150px; display:flex; align-items:center; justify-content:center;
+    font-size:2.4rem; color:white;
+  }
+  .gallery figcaption{padding:0.9rem 1rem;}
+  .gallery figcaption strong{display:block; color:var(--teal-900);}
+  .gallery figcaption span{font-size:0.85rem; color:#6b7a7a;}
+
+  /* ABOUT / FOOTER */
+  .about-wrap{display:flex; gap:2.5rem; flex-wrap:wrap; align-items:center;}
+  .about-wrap .avatar{
+    width:110px; height:110px; border-radius:50%;
+    background:linear-gradient(135deg,var(--teal-500),var(--amber-400));
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:white;
+  }
+  .about-text{flex:1; min-width:240px;}
+  .about-text h3{color:var(--teal-900); margin-top:0;}
+
+  footer{
+    background:var(--teal-900); color:#cfe6e6; text-align:center;
+    padding:2rem 1.25rem; font-size:0.9rem;
+  }
+  footer a{color:var(--amber-400); text-decoration:none; font-weight:600;}
+
+  .edit-note{
+    font-size:0.78rem; color:#9aa; text-align:center; margin-top:0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-wrap">
+    <div class="brand"><span class="brand-mark">🔬</span> The Curiosity Lab</div>
+    <button class="burger" id="burgerBtn" aria-label="Menu">☰</button>
+    <nav>
+      <ul id="navMenu">
+        <li><a href="#units">Units</a></li>
+        <li><a href="#vocab">Vocabulary</a></li>
+        <li><a href="#notebook">Notebook</a></li>
+        <li><a href="#gallery">Scholar Showcase</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="padding-bottom:5.5rem; max-width:none;">
+  <h1>Curious Minds. Real Science.</h1>
+  <p>Welcome, scholars! This is our class hub for interactive notebooks, vocabulary, unit resources, and the amazing work you're doing all year long.</p>
+  <div class="hero-badges">
+    <span class="badge">5th &amp; 6th Grade Science</span>
+    <span class="badge">NGSS Aligned</span>
+    <span class="badge">Scholar-Led Discovery</span>
+  </div>
+  <a href="#units" class="cta">Explore Our Units</a>
+</section>
+
+<section>
+  <div class="callout">
+    <div class="tag">I Can Statement — This Week</div>
+    <p>I can construct an argument using evidence to support a claim about how a system works.</p>
+  </div>
+</section>
+
+<section id="units">
+  <h2 class="section-title">Our Science Units</h2>
+  <p class="section-sub">Each unit below connects to your interactive notebook and includes the big questions we're investigating.</p>
+  <div class="grid">
+    <div class="card">
+      <span class="emoji">🧪</span>
+      <span class="grade-tag">Physical Science</span>
+      <h3>Matter &amp; Its Interactions</h3>
+      <p>Investigating properties of matter, mixtures, and chemical vs. physical change.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🌱</span>
+      <span class="grade-tag">Life Science</span>
+      <h3>Ecosystems &amp; Energy Flow</h3>
+      <p>Exploring how matter and energy move through organisms, food webs, and ecosystems.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🌎</span>
+      <span class="grade-tag">Earth Science</span>
+      <h3>Earth's Systems</h3>
+      <p>Studying the geosphere, hydrosphere, atmosphere, and biosphere and how they interact.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🌌</span>
+      <span class="grade-tag">Space Systems</span>
+      <h3>Stars &amp; the Solar System</h3>
+      <p>Modeling patterns of the sun, moon, stars, and planets in our sky and solar system.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🌦️</span>
+      <span class="grade-tag">Earth Science</span>
+      <h3>Weather &amp; Climate</h3>
+      <p>Analyzing weather data and patterns to understand climate over time.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">⚙️</span>
+      <span class="grade-tag">Engineering</span>
+      <h3>Engineering Design</h3>
+      <p>Defining problems and designing, testing, and improving solutions like real engineers.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vocab" style="background:#f1ece0;">
+  <h2 class="section-title">Vocabulary Lab</h2>
+  <p class="section-sub">Search or scroll to review key terms from our units.</p>
+  <input type="text" class="vocab-search" id="vocabSearch" placeholder="Search a vocabulary word...">
+  <div class="vocab-grid" id="vocabGrid">
+    <div class="vocab-card"><strong>Ecosystem</strong><span>A community of living things interacting with their physical environment.</span></div>
+    <div class="vocab-card"><strong>Hypothesis</strong><span>A testable explanation for an observation or question.</span></div>
+    <div class="vocab-card"><strong>Matter</strong><span>Anything that has mass and takes up space.</span></div>
+    <div class="vocab-card"><strong>Evidence</strong><span>Data or observations used to support a claim.</span></div>
+    <div class="vocab-card"><strong>Variable</strong><span>A factor in an experiment that can change or be changed.</span></div>
+    <div class="vocab-card"><strong>Erosion</strong><span>The process of rock and soil being worn away by wind, water, or ice.</span></div>
+    <div class="vocab-card"><strong>Photosynthesis</strong><span>The process plants use to turn sunlight into energy.</span></div>
+    <div class="vocab-card"><strong>Orbit</strong><span>The curved path an object takes around another object in space.</span></div>
+  </div>
+  <p class="edit-note">Teacher note: add or edit vocabulary cards directly in the HTML — each is one simple block.</p>
+</section>
+
+<section id="notebook">
+  <h2 class="section-title">Interactive Notebook Resources</h2>
+  <p class="section-sub">Printable pages, foldables, and guides for your science notebook.</p>
+  <ul class="resource-list">
+    <li><span class="icon">1</span><div><a href="#">Unit 1 Notebook Pages</a><small>Matter &amp; Its Interactions foldables and reference sheets</small></div></li>
+    <li><span class="icon">2</span><div><a href="#">Unit 2 Notebook Pages</a><small>Ecosystems &amp; Energy Flow diagrams and vocabulary foldable</small></div></li>
+    <li><span class="icon">3</span><div><a href="#">Unit 3 Notebook Pages</a><small>Earth's Systems layered flap book</small></div></li>
+    <li><span class="icon">4</span><div><a href="#">Lab Report Template</a><small>Claim, Evidence, Reasoning (CER) writing frame</small></div></li>
+  </ul>
+  <p class="edit-note">Teacher note: replace the "#" links with your actual notebook page files or Google Drive links.</p>
+</section>
+
+<section id="gallery" style="background:#f1ece0;">
+  <h2 class="section-title">Scholar Showcase</h2>
+  <p class="section-sub">Celebrating the investigations, projects, and discoveries of our scholars.</p>
+  <div class="gallery">
+    <figure>
+      <div class="thumb" style="background:var(--teal-500);">🌋</div>
+      <figcaption><strong>Volcano Model Investigation</strong><span>Add your scholars' project photos and descriptions here.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="thumb" style="background:var(--amber-400);">🧫</div>
+      <figcaption><strong>Ecosystem in a Jar</strong><span>Add your scholars' project photos and descriptions here.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="thumb" style="background:var(--teal-300);">🚀</div>
+      <figcaption><strong>Solar System Scale Model</strong><span>Add your scholars' project photos and descriptions here.</span></figcaption>
+    </figure>
+  </div>
+  <p class="edit-note">Teacher note: swap these placeholder tiles for real photos of student work as projects are completed.</p>
+</section>
+
+<section id="about">
+  <h2 class="section-title">About Our Class</h2>
+  <div class="about-wrap">
+    <div class="avatar">👩‍🔬</div>
+    <div class="about-text">
+      <h3>Welcome to The Curiosity Lab</h3>
+      <p>This site is our shared space for 5th and 6th grade science. Here, scholars build the habits of real scientists and engineers: asking questions, gathering evidence, and explaining how the world works.</p>
+      <p><strong>Contact:</strong> <a href="mailto:lazarickshaw2001@gmail.com">lazarickshaw2001@gmail.com</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>The Curiosity Lab &mdash; Science Scholars, Grades 5–6</p>
+  <p>Built with curiosity. Updated throughout the school year.</p>
+</footer>
+
+<script>
+  document.getElementById('burgerBtn').addEventListener('click', function(){
+    document.getElementById('navMenu').classList.toggle('open');
+  });
+
+  document.getElementById('vocabSearch').addEventListener('input', function(e){
+    var term = e.target.value.toLowerCase();
+    document.querySelectorAll('#vocabGrid .vocab-card').forEach(function(card){
+      var text = card.textContent.toLowerCase();
+      card.classList.toggle('hidden', term.length > 0 && !text.includes(term));
+    });
+  });
+
+  // close mobile menu after clicking a link
+  document.querySelectorAll('#navMenu a').forEach(function(link){
+    link.addEventListener('click', function(){
+      document.getElementById('navMenu').classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>
